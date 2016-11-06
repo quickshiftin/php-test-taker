@@ -70,11 +70,11 @@ class OutputHelper {
     }
 
     public function errorBanner($s) {
-        echo $this->getColoredString("  ERROR: " . strtoupper($s), "black", "red");
+        echo $this->getColoredString("  ERROR: " . strtoupper($s) . ': ', "black", "red");
     }
 
     public function errorDetail($s) {
-        echo $this->getColoredString($s, "red", "black");
+        echo $this->getColoredString($s, "black", "red");
         echo "\n";
     }
 

@@ -3,9 +3,11 @@ class Codility extends TestRunner
 {
     public function loadTest($sTestPath)
     {
-        require $sTestPath;
         if(!function_exists('solution')) {
-            throw new InvalidArgumentException("Found no solution\n");
+            require $sTestPath;
+            if(!function_exists('solution')) {
+                throw new InvalidArgumentException("Found no solution\n");
+            }
         }
     }
 

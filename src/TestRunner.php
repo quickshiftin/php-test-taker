@@ -70,6 +70,7 @@ abstract class TestRunner
         $mResult = $this->_execute($aTestArgs);
         $iEnd    = microtime(true);
         $iTime   = ($iEnd - $iStart) * 1000;
+        $this->_cleanup();
 
         // Evaluate
         $bError = $bTooSlow = $bIncorrect = false;
@@ -105,7 +106,7 @@ abstract class TestRunner
 
         if($this->_bErrors) {
             if($this->_bIncorrect && !$this->_bTooSlow) {
-                $this->_oOutputHelper->warningResult('you have logic issues but speed is ok');
+                $this->_oOutputHelper->errorResult('you have logic issues but speed is ok');
             } elseif(!$this->_bIncorrect && $this->_bTooSlow) {
                 $this->_oOutputHelper->warningResult('logic is ok but runs too slow');
             } else {
@@ -146,6 +147,11 @@ abstract class TestRunner
             echo $mTestArg;
         }
     }
+
+    /**
+     * Any cleanup the subclass might need to perform after a test run.
+     */
+    protected function _cleanup() {}
 
     /**
      * Subclass is given the path to the test script.

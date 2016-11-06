@@ -55,7 +55,6 @@ $oTester = new $sTestType($sName);
 
 try {
     $oTester->loadConfig($aTests['cases']);
-    $oTester->loadTest($sTestScript);
     $oTester->displayTestBanner();
 } catch(Exception $e) {
     echo "$sTestScript\n";
@@ -64,6 +63,7 @@ try {
 
 // TEST HARNESS
 while($oTester->hasMoreCases()) {
+    $oTester->loadTest($sTestScript);
     $oTester->run();
 }
 
