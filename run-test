@@ -1,0 +1,96 @@
+#!/usr/bin/php
+<?php
+
+// Load the test script
+$sTestData   = $argv[1];
+$sTestScript = $argv[2];
+
+if(!file_exists($sTestData)) {
+    die("No test data: $sTestData\n");
+}
+
+if(!file_exists($sTestScript)) {
+    die("Bogus test script: $sTestScript\n");
+}
+
+$aTests = require $sTestData;
+require $sTestScript;
+
+if(!is_array($aTests)) {
+    die("Found no test cases\n");
+}
+
+if(!function_exists('solution')) {
+    die("Found no solution\n");
+}
+
+// TEST HARNESS
+$bErrors = false;
+foreach($aTests as $iTest => $aTest) {
+    // Load the test
+    $bHasExpectation = false;
+    if(isset($aTest['expectation']) && isset($aTest['test'])) {
+        $bHasExpectation = true;
+        $aTestCase       = $aTest['test'];
+        $mExpectation    = $aTest['expectation'];
+    } else {
+        $aTestCase = $aTest;
+    }
+
+    // Print test overview
+    if($iTest > 0) {
+        echo "\n";
+    }
+
+
+    if(is_array($aTestCase) && count($aTestCase) > 20) {
+        $_aTestCase = array_slice($aTest, 0, 15);
+        echo "Testing case: [" . implode(', ', $_aTestCase) . ", ...]\n";
+    } else {
+        echo "Testing case: " . print_r($aTestCase, true) . "\n";
+    }
+
+
+    // Run the test
+    $iStart  = microtime(true);
+    $mResult = solution($aTestCase);
+    $iEnd    = microtime(true);
+    $iTime   = ($iEnd - $iStart) * 1000;
+
+    // Evaluate
+    $bError = $bTooSlow = $bIncorrect = false;
+    if($iTime > 900) {
+        $bError = $bTooSlow = true;
+        echo "  ERROR: TOOK TOO LONG\n";
+        echo "         Ran in " . round($iTime, 2) . "\n";
+    }
+
+    if($bHasExpectation && $mResult != $mExpectation) {
+        $bError = $bIncorrect = true;
+        echo "  ERROR: WRONG RESULT; expected: " . print_r($mExpectation, true) . ' got ' . print_r($mResult, true) . "\n";
+    }
+
+    if(!$bError) {
+        echo "  OK    : Ran in " . round($iTime, 2) . "\n";
+        echo "  Result: " . print_r($mResult, true) . "\n";
+    } else {
+        $bErrors = true;
+    }
+}
+
+if($bErrors) {
+    echo "************************************************************\n";
+    if($bIncorrect && !$bTooSlow) {
+        echo " YOU HAVE LOGIC ISSUES BUT SPEED IS OK\n";
+    } elseif(!$bIncorrect && $bTooSlow) {
+        echo " LOGIC IS OK BUT RUNS TOO SLOW\n";        
+    } else {
+        echo " YOU HAVE LOGIC & SPEED ISSUES CHECK THEM OUT!!\n";
+    }
+    echo "************************************************************\n";
+} else {
+    echo "\n";
+    echo "************************************************************\n";
+    echo " SUBMIT THIS BITCH\n";
+    echo "************************************************************\n";
+}
