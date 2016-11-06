@@ -74,7 +74,7 @@ abstract class TestRunner
 
         // Evaluate
         $bError = $bTooSlow = $bIncorrect = false;
-        if($iTime > 900) {
+        if($iTime > 500) {
             $bError = true;
             $this->_bTooSlow = true;
             $this->_oOutputHelper->errorBanner('took too long');
