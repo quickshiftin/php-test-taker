@@ -140,7 +140,7 @@ You might want another subdirectory for each site like tests/hacker-rank/steady-
 
 To run a test use the `run-test` script, passing it the path to a test config and solution.
 
-`./run-test tests/sherlock-and-anagrams/config.php tests/sherlock-and-anagrams/solution1.php
+`./run-test tests/sherlock-and-anagrams/config.php tests/sherlock-and-anagrams/solution1.php`
 ```
 ================================================================================
                   Running HackerRank Sherlock and Anagrams Test
