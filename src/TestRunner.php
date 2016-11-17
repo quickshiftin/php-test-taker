@@ -81,12 +81,26 @@ abstract class TestRunner
             $this->_oOutputHelper->errorDetail('Ran in ' . round($iTime, 2));
         }
 
-        if($bHasExpectation && $mResult != $mExpectation) {
-            $bError = true;
-            $this->_bIncorrect = true;
-            $this->_oOutputHelper->errorBanner('wrong result');
-            $this->_oOutputHelper->errorDetail(
-                'Expected ' . print_r($mExpectation, true) . ' got ' . print_r($mResult, true));
+        if($bHasExpectation) {
+            if(!is_array($mExpectation)) {
+                $bSuccess = $mResult == $mExpectation;
+            } else {
+                $bSuccess = true;
+                foreach($mExpectation as $k => $v) {
+                    if(!isset($mResult[$k]) || $mResult[$k] != $v) {
+                        $bSuccess = false;
+                        break;
+                    }
+                }
+            }
+
+            if(!$bSuccess) {
+                $bError = true;
+                $this->_bIncorrect = true;
+                $this->_oOutputHelper->errorBanner('wrong result');
+                $this->_oOutputHelper->errorDetail(
+                    'Expected ' . $this->_printTestArg($mExpectation, true, true) . ' got ' . $this->_printTestArg($mResult, true, true));
+            }
         }
 
         if(!$bError) {
@@ -117,10 +131,11 @@ abstract class TestRunner
         }
     }
 
-    private function _printTestArg($mTestArg, $bIsFirst)
+    private function _printTestArg($mTestArg, $bIsFirst, $bReturn=false)
     {
+        $sResult = '';
         if(!$bIsFirst) {
-            echo ', ';
+            $sResult .= ', ';
         }
 
         if(is_array($mTestArg)) {
@@ -129,23 +144,29 @@ abstract class TestRunner
                 $bLongInput = true;
                 $mTestArg = array_slice($mTestArg, 0, 10);
             }
-            echo '[' . implode(', ', $mTestArg);
+            $sResult .= '[' . implode(', ', $mTestArg);
             if($bLongInput) {
-                echo ', ...]';
+                $sResult .= ', ...]';
             } else {
-                echo ']';
+                $sResult .= ']';
             }
         } elseif(is_string($mTestArg) && strlen($mTestArg) > 10) {
-            echo substr($mTestArg, 0, 10) . '...';
+            $sResult .= substr($mTestArg, 0, 10) . '...';
         } elseif(is_bool($mTestArg)) {
             if($mTestArg) {
-                echo 'true';
+                $sResult .= 'true';
             } else {
-                echo 'false';
+                $sResult .= 'false';
             }
         } else {
-            echo $mTestArg;
+            $sResult .= $mTestArg;
         }
+
+        if($bReturn) {
+            return $sResult;
+        }
+
+        echo $sResult;
     }
 
     /**

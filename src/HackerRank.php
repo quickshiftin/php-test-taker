@@ -2,7 +2,6 @@
 class HackerRank extends TestRunner
 {
     private
-        $_sTestPath,
         $_rProcess,
         $_aPipes;
 
@@ -29,9 +28,7 @@ class HackerRank extends TestRunner
         }
         fclose($this->_aPipes[0]);
 
-        $sOutput = stream_get_contents($this->_aPipes[1]);
-
-        return $sOutput;
+        return explode("\n", trim(stream_get_contents($this->_aPipes[1])));
     }
 
     protected function _cleanup()
